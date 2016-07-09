@@ -68,6 +68,7 @@ def guess_dotted_path(document):
     if selection:
         return selection
     line = scintilla.get_line(scintilla.get_current_line()).lstrip()
+    # TODO: handle multiline imports.
     if line.startswith('from ') or line.startswith('import '):
         words = line.split()
         if len(words) > 1:
@@ -86,6 +87,9 @@ def find_module(dotted_path, base_filename, python_path):
         return find_module_relative(dotted_path, base_filename)
     names = dotted_path.split('.')
     if base_filename:
+        # TODO: when no `python_path` is set,
+        # guess it by traversing up the directory stack
+        # until finding one that doesn't have an ``__init__.py``.
         python_path = python_path + [os.path.dirname(base_filename)]
     return find_names_under(names, python_path)
 
@@ -102,6 +106,7 @@ def find_module_relative(dotted_path, base_filename):
 
 
 def find_names_under(names, base_dirs):
+    # TODO: use `os.path.join`, and bring it out of the loop.
     for base_dir in base_dirs:
         for rel_fn in ['/'.join(names) + '.py',
                        '/'.join(names) + '/__init__.py']:
