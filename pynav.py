@@ -43,8 +43,8 @@ class PyNav(geany.Plugin):
         if geany.app.project is not None:
             cfg = ConfigParser.ConfigParser()
             cfg.read([geany.app.project.file_name])
-            if cfg.has_option('python_env', 'path'):
-                self.python_path = cfg.get('python_env', 'path').split(':')
+            if cfg.has_option('pynav', 'path'):
+                self.python_path = cfg.get('pynav', 'path').split(':')
 
     def unload_project_config(self):
         self.python_path = []
