@@ -8,7 +8,7 @@ import gtk
 class PyNav(geany.Plugin):
 
     __plugin_name__ = 'Python Navigation'
-    __plugin_version__ = '0.1.0'
+    __plugin_version__ = '0.2.0.dev1'
     __plugin_description__ = 'Navigate a Python codebase quicker'
     __plugin_author__ = 'Vasiliy Faronov <vfaronov@gmail.com>'
 
