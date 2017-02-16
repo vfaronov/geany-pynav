@@ -88,9 +88,9 @@ def prompt_dotted_path():
 
 
 def find_module(dotted_path, base_filename, python_path):
-    if dotted_path.startswith('.'):
-        return find_module_relative(dotted_path, base_filename)
     names = dotted_path.split('.')
+    if names[0] == '':
+        return find_names_relative(names, base_filename)
     if base_filename:
         # Augment the explicitly provided `python_path` with some guesses,
         # but avoid doing the actual guesswork until we've tried the explicit.
@@ -99,10 +99,9 @@ def find_module(dotted_path, base_filename, python_path):
     return find_names_under(names, python_path)
 
 
-def find_module_relative(dotted_path, base_filename):
+def find_names_relative(names, base_filename):
     if not base_filename:
         return None
-    names = dotted_path.split('.')
     location = base_filename
     while names and names[0] == '':
         names.pop(0)
