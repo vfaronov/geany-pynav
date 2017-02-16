@@ -1,4 +1,5 @@
 import ConfigParser
+import itertools
 import os
 
 import geany        # pylint: disable=import-error
@@ -87,10 +88,10 @@ def find_module(dotted_path, base_filename, python_path):
         return find_module_relative(dotted_path, base_filename)
     names = dotted_path.split('.')
     if base_filename:
-        # TODO: when no `python_path` is set,
-        # guess it by traversing up the directory stack
-        # until finding one that doesn't have an ``__init__.py``.
-        python_path = python_path + [os.path.dirname(base_filename)]
+        # Augment the explicitly provided `python_path` with some guesses,
+        # but avoid doing the actual guesswork until we've tried the explicit.
+        python_path = itertools.chain(python_path,
+                                      guess_python_path(base_filename))
     return find_names_under(names, python_path)
 
 
@@ -103,6 +104,22 @@ def find_module_relative(dotted_path, base_filename):
         names.pop(0)
         location = os.path.dirname(location)
     return find_names_under(names, [location])
+
+
+def guess_python_path(filename):
+    # Try the current directory, for implicit relative imports.
+    pos = start = os.path.dirname(filename)
+    yield pos
+
+    # Walk up the tree to find the first directory that has no ``__init__.py``.
+    # That directory is the most likely Python path.
+    while os.path.exists(os.path.join(pos, '__init__.py')):
+        new_pos = os.path.dirname(pos)
+        if new_pos == pos or not new_pos:        # Somehow we're at the root?..
+            break
+        pos = new_pos
+    if pos != start:
+        yield pos
 
 
 def find_names_under(names, base_dirs):
