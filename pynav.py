@@ -44,7 +44,11 @@ class PyNav(geany.Plugin):
             cfg = ConfigParser.ConfigParser()
             cfg.read([geany.app.project.file_name])
             if cfg.has_option('pynav', 'path'):
-                self.python_path = cfg.get('pynav', 'path').split(':')
+                # `os.pathsep` is used as for ``PYTHONPATH``; see
+                # https://docs.python.org/2/using/cmdline.html
+                self.python_path = cfg.get('pynav', 'path').split(os.pathsep)
+                # Remove blanks
+                self.python_path = [p for p in self.python_path if p]
 
     def unload_project_config(self):
         self.python_path = []
