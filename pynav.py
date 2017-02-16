@@ -123,10 +123,12 @@ def guess_python_path(filename):
 
 
 def find_names_under(names, base_dirs):
-    # TODO: use `os.path.join`, and bring it out of the loop.
+    relative_filenames = [
+        os.path.join(*names) + '.py',
+        os.path.join(*(names + ['__init__.py'])),
+    ]
     for base_dir in base_dirs:
-        for rel_fn in ['/'.join(names) + '.py',
-                       '/'.join(names) + '/__init__.py']:
+        for rel_fn in relative_filenames:
             candidate = os.path.join(base_dir, rel_fn)
             if os.path.isfile(candidate):
                 return candidate
